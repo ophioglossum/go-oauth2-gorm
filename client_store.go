@@ -13,9 +13,9 @@ import (
 )
 
 type ClientStoreItem struct {
-	ID        string
+	ID        string `gorm:"primarykey;type:varchar(128)"`
 	Secret    string `gorm:"type:varchar(128)"`
-	Domain    string `gorm:"type:varchar(128)"`
+	Domain    string `gorm:"type:varchar(512)"`
 	Data      string `gorm:"type:text"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
