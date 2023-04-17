@@ -1,4 +1,4 @@
-module github.com/ophioglossum/go-oauth2-gorm/v4
+module github.com/ophioglossum/go-oauth2-gorm
 
 require (
 	github.com/go-oauth2/oauth2/v4 v4.5.2
