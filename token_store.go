@@ -15,22 +15,12 @@ import (
 
 type TokenStoreItem struct {
 	gorm.Model
-	ClientID            string `gorm:"index;type:varchar(64)"`
-	UserID              string `gorm:"index;type:varchar(32)"`
-	RedirectURI         string `gorm:"type:varchar(512)"`
-	Scope               string `gorm:"type:varchar(32)"`
-	Code                string `gorm:"index;type:varchar(512)"`
-	CodeChallenge       string `gorm:"type:varchar(512)"`
-	CodeChallengeMethod string `gorm:"type:varchar(512)"`
-	CodeCreateAt        string `gorm:"type:varchar(512)"`
-	CodeExpiresIn       int64
-	Access              string `gorm:"index;type:varchar(512)"`
-	AccessCreateAt      time.Time
-	AccessExpiresIn     int64
-	Refresh             string `gorm:"index;type:varchar(512)"`
-	RefreshCreateAt     time.Time
-	RefreshExpiresIn    int64
-	Data                string `gorm:"type:text"`
+
+	ExpiredAt int64
+	Code      string `gorm:"type:varchar(512)"`
+	Access    string `gorm:"type:varchar(512)"`
+	Refresh   string `gorm:"type:varchar(512)"`
+	Data      string `gorm:"type:text"`
 }
 
 // NewStore create mysql store instance,
@@ -132,14 +122,14 @@ func (s *TokenStore) Create(ctx context.Context, info oauth2.TokenInfo) error {
 
 	if code := info.GetCode(); code != "" {
 		item.Code = code
-		item.CodeExpiresIn = info.GetCodeCreateAt().Add(info.GetCodeExpiresIn()).Unix()
+		item.ExpiredAt = info.GetCodeCreateAt().Add(info.GetCodeExpiresIn()).Unix()
 	} else {
 		item.Access = info.GetAccess()
-		item.AccessExpiresIn = info.GetAccessCreateAt().Add(info.GetAccessExpiresIn()).Unix()
+		item.ExpiredAt = info.GetAccessCreateAt().Add(info.GetAccessExpiresIn()).Unix()
 
 		if refresh := info.GetRefresh(); refresh != "" {
 			item.Refresh = info.GetRefresh()
-			item.RefreshExpiresIn = info.GetRefreshCreateAt().Add(info.GetRefreshExpiresIn()).Unix()
+			item.ExpiredAt = info.GetRefreshCreateAt().Add(info.GetRefreshExpiresIn()).Unix()
 		}
 	}
 
