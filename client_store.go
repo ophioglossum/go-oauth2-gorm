@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/go-oauth2/oauth2/v4"
@@ -13,15 +14,13 @@ import (
 )
 
 type ClientStoreItem struct {
-	ID        string `gorm:"primarykey;type:varchar(64)"`
-	Secret    string `gorm:"type:varchar(128)"`
-	Domain    string `gorm:"type:varchar(512)"`
-	Data      string `gorm:"type:text"`
-	Public    bool
-	UserID    string `gorm:"index;type:varchar(32)"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	gorm.Model
+	ClientID     string `gorm:"uniqueIndex;type:varchar(64)"`
+	ClientSecret string `gorm:"type:varchar(128)"`
+	Domain       string `gorm:"type:varchar(512)"`
+	Data         string `gorm:"type:text"`
+	Public       bool
+	UserID       uint `gorm:"index;"`
 }
 
 func NewClientStore(config *Config) *ClientStore {
@@ -78,7 +77,7 @@ func (s *ClientStore) GetByID(ctx context.Context, id string) (oauth2.ClientInfo
 	}
 
 	var item ClientStoreItem
-	err := s.db.WithContext(ctx).Table(s.tableName).Limit(1).Find(&item, "id = ?", id).Error
+	err := s.db.WithContext(ctx).Table(s.tableName).Limit(1).Find(&item, "client_id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -91,13 +90,14 @@ func (s *ClientStore) Create(ctx context.Context, info oauth2.ClientInfo) error 
 	if err != nil {
 		return err
 	}
+	userId, _ := strconv.ParseUint(info.GetUserID(), 10, 64)
 	item := &ClientStoreItem{
-		ID:     info.GetID(),
-		Secret: info.GetSecret(),
-		Domain: info.GetDomain(),
-		Data:   string(data),
-		Public: info.IsPublic(),
-		UserID: info.GetUserID(),
+		ClientID:     info.GetID(),
+		ClientSecret: info.GetSecret(),
+		Domain:       info.GetDomain(),
+		Data:         string(data),
+		Public:       info.IsPublic(),
+		UserID:       uint(userId),
 	}
 
 	return s.db.WithContext(ctx).Table(s.tableName).Create(item).Error
