@@ -1,5 +1,7 @@
 module github.com/ophioglossum/go-oauth2-gorm
 
+go 1.20
+
 require (
 	github.com/go-oauth2/oauth2/v4 v4.5.2
 	github.com/smartystreets/goconvey v1.8.0
@@ -27,5 +29,3 @@ require (
 	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
 )
-
-go 1.20
