@@ -77,7 +77,7 @@ func (s *ClientStore) GetByID(ctx context.Context, id string) (oauth2.ClientInfo
 	}
 
 	var item ClientStoreItem
-	err := s.db.WithContext(ctx).Table(s.tableName).Limit(1).Find(&item, "client_id = ?", id).Error
+	err := s.db.WithContext(ctx).Table(s.tableName).Where("client_id = ?", id).First(&item).Error
 	if err != nil {
 		return nil, err
 	}

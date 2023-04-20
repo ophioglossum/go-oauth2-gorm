@@ -15,11 +15,11 @@ import (
 
 type TokenStoreItem struct {
 	gorm.Model
-
-	ExpiredAt int64
-	Code      string `gorm:"type:varchar(512)"`
-	Access    string `gorm:"type:varchar(512)"`
-	Refresh   string `gorm:"type:varchar(512)"`
+	ClientID  string `gorm:"index;type:varchar(64)"`
+	ExpiredAt int64  `gorm:"index"`
+	Code      string `gorm:"index;type:varchar(128)"`
+	Access    string `gorm:"index;type:varchar(128)"`
+	Refresh   string `gorm:"index;type:varchar(128)"`
 	Data      string `gorm:"type:text"`
 }
 
@@ -118,6 +118,10 @@ func (s *TokenStore) Create(ctx context.Context, info oauth2.TokenInfo) error {
 	}
 	item := &TokenStoreItem{
 		Data: string(jv),
+	}
+
+	if clientID := info.GetClientID(); clientID != "" {
+		item.ClientID = clientID
 	}
 
 	if code := info.GetCode(); code != "" {
