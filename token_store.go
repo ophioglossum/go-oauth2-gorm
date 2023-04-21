@@ -17,9 +17,9 @@ type TokenStoreItem struct {
 	gorm.Model
 	ClientID  string `gorm:"index;type:varchar(64)"`
 	ExpiredAt int64  `gorm:"index"`
-	Code      string `gorm:"index;type:varchar(128)"`
-	Access    string `gorm:"index;type:varchar(128)"`
-	Refresh   string `gorm:"index;type:varchar(128)"`
+	Code      string `gorm:"index;type:varchar(256)"`
+	Access    string `gorm:"index;type:varchar(256)"`
+	Refresh   string `gorm:"index;type:varchar(256)"`
 	Data      string `gorm:"type:text"`
 }
 
