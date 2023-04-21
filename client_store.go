@@ -15,12 +15,12 @@ import (
 
 type ClientStoreItem struct {
 	gorm.Model
-	ClientID     string `gorm:"uniqueIndex;type:varchar(64)"`
-	ClientSecret string `gorm:"type:varchar(128)"`
-	Domain       string `gorm:"type:varchar(512)"`
-	Data         string `gorm:"type:text"`
-	Public       bool
-	UserID       uint `gorm:"index;"`
+	ClientID     string `gorm:"uniqueIndex;type:varchar(64);comment:客户端id"`
+	ClientSecret string `gorm:"type:varchar(128);comment:客户端secret"`
+	Domain       string `gorm:"type:varchar(512);comment:允许的客户端域名,code的时候需要用到"`
+	Data         string `gorm:"type:text;comment:json数据内容"`
+	Public       bool   `gorm:"comment:public"`
+	UserID       uint   `gorm:"index;comment:用户id"`
 }
 
 func NewClientStore(config *Config) *ClientStore {

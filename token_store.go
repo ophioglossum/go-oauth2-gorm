@@ -15,12 +15,12 @@ import (
 
 type TokenStoreItem struct {
 	gorm.Model
-	ClientID  string `gorm:"index;type:varchar(64)"`
-	ExpiredAt int64  `gorm:"index"`
-	Code      string `gorm:"index;type:varchar(256)"`
-	Access    string `gorm:"index;type:varchar(256)"`
-	Refresh   string `gorm:"index;type:varchar(256)"`
-	Data      string `gorm:"type:text"`
+	ClientID  string `gorm:"index;type:varchar(64);comment:客户端id"`
+	ExpiredAt int64  `gorm:"index;comment:过期时间"`
+	Code      string `gorm:"index;type:varchar(256);comment:code"`
+	Access    string `gorm:"index;type:varchar(256);comment:access_token"`
+	Refresh   string `gorm:"index;type:varchar(256);comment:refresh_token"`
+	Data      string `gorm:"type:text;comment:json数据内容"`
 }
 
 // NewStore create mysql store instance,
