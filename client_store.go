@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/go-oauth2/oauth2/v4"
@@ -20,7 +19,6 @@ type ClientStoreItem struct {
 	Domain       string `gorm:"type:varchar(512);comment:允许的客户端域名,code的时候需要用到"`
 	Data         string `gorm:"type:text;comment:json数据内容"`
 	Public       bool   `gorm:"comment:public"`
-	UserID       uint   `gorm:"index;comment:用户id"`
 }
 
 func NewClientStore(config *Config) *ClientStore {
@@ -90,14 +88,12 @@ func (s *ClientStore) Create(ctx context.Context, info oauth2.ClientInfo) error 
 	if err != nil {
 		return err
 	}
-	userId, _ := strconv.ParseUint(info.GetUserID(), 10, 64)
 	item := &ClientStoreItem{
 		ClientID:     info.GetID(),
 		ClientSecret: info.GetSecret(),
 		Domain:       info.GetDomain(),
 		Data:         string(data),
 		Public:       info.IsPublic(),
-		UserID:       uint(userId),
 	}
 
 	return s.db.WithContext(ctx).Table(s.tableName).Create(item).Error
