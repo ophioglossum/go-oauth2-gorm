@@ -49,7 +49,7 @@ func NewClientStoreWithDB(config *Config, db *gorm.DB) *ClientStore {
 	}
 
 	if !db.Migrator().HasTable(store.tableName) {
-		if err := db.Table(store.tableName).Migrator().CreateTable(&ClientStoreItem{}); err != nil {
+		if err := db.Table(store.tableName).Set("gorm:table_options", "COMMENT='oauth2客户端授权表'").Migrator().CreateTable(&ClientStoreItem{}); err != nil {
 			panic(err)
 		}
 	}

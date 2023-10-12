@@ -15,7 +15,7 @@ import (
 
 type TokenStoreItem struct {
 	gorm.Model
-	ClientID  string `gorm:"index;type:varchar(64);comment:客户端id"`
+	ClientID  string `gorm:"index;type:varchar(64);not null;comment:客户端id"`
 	ExpiredAt int64  `gorm:"index;comment:过期时间"`
 	Code      string `gorm:"index;type:varchar(256);comment:code"`
 	Access    string `gorm:"index;type:varchar(256);comment:access_token"`
@@ -58,7 +58,7 @@ func NewTokenStoreWithDB(config *Config, db *gorm.DB, gcInterval int) *TokenStor
 	store.ticker = time.NewTicker(time.Second * time.Duration(interval))
 
 	if !db.Migrator().HasTable(store.tableName) {
-		if err := db.Table(store.tableName).Migrator().CreateTable(&TokenStoreItem{}); err != nil {
+		if err := db.Table(store.tableName).Set("gorm:table_options", "COMMENT='oauth2令牌表'").Migrator().CreateTable(&TokenStoreItem{}); err != nil {
 			panic(err)
 		}
 	}
